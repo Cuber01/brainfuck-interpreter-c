@@ -4,7 +4,7 @@
 #include "main.h"
 
 #define STACK_LIMIT 50
-#define STACK_TYPE bracket_t
+#define STACK_TYPE int
 
 extern int stack_index;
 extern STACK_TYPE stack[STACK_LIMIT];

@@ -5,7 +5,7 @@
 
 
 int stack_index = -1;
-STACK_TYPE empty = {'e', -1};
+STACK_TYPE empty = -1;
 STACK_TYPE stack[STACK_LIMIT];
 
 
@@ -15,7 +15,7 @@ void _Error(char* message, int line, char* file);
 
 int isFull(void)
 {
-    return stack_index >= STACK_LIMIT - 1;
+    return (stack_index >= STACK_LIMIT - 1);
 }
  
 int isEmpty(void)
@@ -33,19 +33,20 @@ void push(STACK_TYPE value)
     stack[stack_index] = value;
 
 
-    printf("pushed to stack\n");
+   // printf("pushed to stack\n");
 }
  
 STACK_TYPE pop()
 {
     STACK_TYPE rv;
     
-    if (isEmpty())
+    if (isEmpty()) {
         _Error("Stack is empty", __LINE__, __FILE__);
+    }
 
     rv = stack[stack_index];
 
-    stack[stack_index] = empty; //edit this
+    stack[stack_index] = empty;
     stack_index--;
 
     return rv;
@@ -53,10 +54,17 @@ STACK_TYPE pop()
  
 STACK_TYPE getValue(int i)
 {
-    if (isEmpty())
+    if (isEmpty()) {
         _Error("Stack is empty", __LINE__, __FILE__);
+    }
 
-    return stack[i];
+    if (stack[i] != empty) {
+        return stack[i];
+    } else {
+        _Error("Index is empty", __LINE__, __FILE__);
+    }
+
+    return -1;
 }
  
 void _Error(char* message, int line, char* file)

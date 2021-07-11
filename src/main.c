@@ -5,11 +5,11 @@
 #include "main.h"
 #include "stack.h"
 
-char input[FILESIZE_LIMIT]; //expression must be an integral constant expressio
+uint8_t input_buffer[FILESIZE_LIMIT]; //expression must be an integral constant expressio
 uint8_t memory[CELL_LIMIT];
 uint8_t pointer;
 
-
+#define END_PROGRAM 0xFF
 
 void fileLoad()
 {
@@ -29,60 +29,91 @@ void fileLoad()
 
     while ((ch = fgetc(fp)) != EOF)
     {
-        input[i] = ch;
+        input_buffer[i] = ch;
         i++;
     }
 
+    input_buffer[i] = END_PROGRAM;
+
     fclose(fp);
+}
+
+
+void Interpret()
+{
+    uint8_t tmp_i=0;
+    int i = 0;
+    uint32_t counter=0;
+    printf("-- START -- \r\n");
+
+    while( i <= FILESIZE_LIMIT )
+    {        
+        uint8_t c = input_buffer[i];
+        //printf( "%08X %06d: %c %d %02X\r", counter++, i, c, pointer, memory[pointer]  );  fflush(stdout);        
+        if( c == END_PROGRAM ) break;
+        
+        switch (c) {
+            
+            case '+': memory[pointer]++; i++;        break;
+            case '-': memory[pointer]--; i++;        break;
+            
+            case '>': pointer++;         i++;        break;
+            case '<': pointer--;         i++;        break;
+            
+            case '.': printf("%c", memory[pointer]); i++; break;
+            
+            case '[': 
+                push(i);
+                if (memory[pointer] == 0)
+                {                    
+                    for (int j = i+1; j <= FILESIZE_LIMIT; j++)
+                    {
+                        if (input_buffer[j] == '['){
+                            push(j);                                                    
+                        }
+                        if (input_buffer[j] == ']') 
+                        {
+                            tmp_i = pop();
+                            if( isEmpty() ){
+                                push(tmp_i);                                
+                                i = j;
+                            }
+                            break;
+                        }
+                    }
+                }else{
+                    i++;
+                }
+                break;
+
+            case ']':
+                tmp_i = pop();
+                if (memory[pointer] != 0)
+                {
+                    i = tmp_i;
+                    break;
+                } else{
+                    i++;
+                } 
+                break;
+            default: 
+                printf("\r\nERROR!\r\n");
+                exit(1);
+                break;
+        }
+
+    }
+
+    printf("\n -- END -- \r\n");
 }
 
 int main()
 {
     fileLoad();
 
-    for (int i = 0; i <= FILESIZE_LIMIT; i++)
-    {
-        char c = input[i];
-        
-        switch (c) {
-            
-            case '+': memory[pointer]++;             break;
-            case '-': memory[pointer]--;             break;
-            
-            case '>': pointer++;                     break;
-            case '<': pointer--;                     break;
-            
-            case '.': printf("%c", memory[pointer]); break;
-            
-            case '[': 
-                if (memory[pointer] == 0)
-                {
-                    for (int j = i; j <= FILESIZE_LIMIT; j++)
-                    {
-                        if (input[j] == ']') 
-                        {
-                            i = j;
-                            break;
-                        }
-                    }
-                } break;
+    Interpret();
 
-            case ']':
-                if (memory[pointer] != 0)
-                {
-                    for (int j = i; j >= 0; j--)
-                    {
-                        if (input[j] == '[') 
-                        {
-                            i = j;
-                            break;
-                        }
-                    }
-                } 
-            default: break;
-        }
-    }
-
+   
     return 0;
 }
 
