@@ -3,6 +3,7 @@
 #include <stdint.h>
 
 #include "main.h"
+#include "stack.h"
 
 char input[FILESIZE_LIMIT]; //expression must be an integral constant expressio
 uint8_t memory[CELL_LIMIT];
@@ -81,9 +82,6 @@ int main()
             default: break;
         }
     }
-
-    // printf("%d ", memory[pointer]);
-    // printf("%d ", memory[1]);
 
     return 0;
 }

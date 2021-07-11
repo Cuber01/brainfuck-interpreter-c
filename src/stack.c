@@ -1,9 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "stack.h"
+
+
 int stack_index = -1;
-#define STACK_LIMIT 50
-int stack[STACK_LIMIT];
+STACK_TYPE empty = {'e', -1};
+STACK_TYPE stack[STACK_LIMIT];
+
+
+
 
 void _Error(char* message, int line, char* file);
 
@@ -18,7 +24,7 @@ int isEmpty(void)
 }
  
 
-void push(int value)
+void push(STACK_TYPE value)
 {
     if (isFull())
         _Error("Stack is full", __LINE__, __FILE__);
@@ -27,30 +33,30 @@ void push(int value)
     stack[stack_index] = value;
 
 
-    printf("%d pushed to stack\n", value);
+    printf("pushed to stack\n");
 }
  
-int pop()
+STACK_TYPE pop()
 {
-    int rv;
+    STACK_TYPE rv;
     
     if (isEmpty())
         _Error("Stack is empty", __LINE__, __FILE__);
 
     rv = stack[stack_index];
 
-    stack[stack_index] = -1;
+    stack[stack_index] = empty; //edit this
     stack_index--;
 
     return rv;
 }
  
-int getValue(int ind)
+STACK_TYPE getValue(int i)
 {
     if (isEmpty())
         _Error("Stack is empty", __LINE__, __FILE__);
 
-    return stack[ind];
+    return stack[i];
 }
  
 void _Error(char* message, int line, char* file)
