@@ -5,9 +5,9 @@
 #include "main.h"
 #include "stack.h"
 
-uint8_t input_buffer[FILESIZE_LIMIT]; //expression must be an integral constant expressio
-uint8_t memory[CELL_LIMIT];
-uint8_t pointer;
+int input_buffer[FILESIZE_LIMIT]; //expression must be an integral constant expressio
+int memory[CELL_LIMIT];
+uint16_t pointer;
 
 #define END_PROGRAM 0xFF
 
@@ -30,6 +30,7 @@ void fileLoad()
     while ((ch = fgetc(fp)) != EOF)
     {
         input_buffer[i] = ch;
+   //     printf("%d", i);
         i++;
     }
 
@@ -41,7 +42,7 @@ void fileLoad()
 
 void Interpret()
 {
-    uint8_t tmp_i=0;
+    int tmp_i=0;
     int i = 0;
     uint32_t counter=0;
     printf("-- START -- \r\n");
@@ -49,8 +50,10 @@ void Interpret()
     while( i <= FILESIZE_LIMIT )
     {        
         uint8_t c = input_buffer[i];
-        //printf( "%08X %06d: %c %d %02X\r", counter++, i, c, pointer, memory[pointer]  );  fflush(stdout);        
+          
         if( c == END_PROGRAM ) break;
+
+       // printf( "%08X %06d: \'%c\' %d %02X\r\n", counter++, i, c, pointer, memory[pointer]  );  fflush(stdout);     
         
         switch (c) {
             
@@ -59,29 +62,44 @@ void Interpret()
             
             case '>': pointer++;         i++;        break;
             case '<': pointer--;         i++;        break;
+
             
             case '.': printf("%c", memory[pointer]); i++; break;
             
             case '[': 
+
+                if (i==123) {
+                    int a = 0;
+                }
+
                 push(i);
                 if (memory[pointer] == 0)
-                {                    
+                {      
+                    int level = 1;              
                     for (int j = i+1; j <= FILESIZE_LIMIT; j++)
                     {
                         if (input_buffer[j] == '['){
+                            level++;
                             push(j);                                                    
                         }
+
+
+
                         if (input_buffer[j] == ']') 
                         {
                             tmp_i = pop();
-                            if( isEmpty() ){
+                            level--;
+
+                            //if( isEmpty() ){
+                            if( level == 0 ){                                                                
                                 push(tmp_i);                                
                                 i = j;
                             }
+
                             break;
                         }
                     }
-                }else{
+                } else {
                     i++;
                 }
                 break;
@@ -92,13 +110,14 @@ void Interpret()
                 {
                     i = tmp_i;
                     break;
-                } else{
+                } else {
                     i++;
                 } 
                 break;
             default: 
-                printf("\r\nERROR!\r\n");
-                exit(1);
+                //printf("Eooer\r\n");
+                //printf( "%08X %06d: \'%c\' %d %02X\r\n", counter++, i, c, pointer, memory[pointer]  );  fflush(stdout);      
+                //exit(1);
                 break;
         }
 

@@ -6,7 +6,7 @@
 #define STACK_LIMIT 50
 #define STACK_TYPE int
 
-extern int stack_index;
+extern int16_t stack_index;
 extern STACK_TYPE stack[STACK_LIMIT];
 
 int isFull(void);

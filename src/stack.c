@@ -4,7 +4,7 @@
 #include "stack.h"
 
 
-int stack_index = -1;
+int16_t stack_index = -1;
 STACK_TYPE empty = -1;
 STACK_TYPE stack[STACK_LIMIT];
 
@@ -27,13 +27,15 @@ int isEmpty(void)
 void push(STACK_TYPE value)
 {
     if (isFull())
-        _Error("Stack is full", __LINE__, __FILE__);
+         _Error("Stack is full", __LINE__, __FILE__);
+
+    if (value == 123){
+        int a = 0;
+    }
 
     stack_index++;
     stack[stack_index] = value;
 
-
-   // printf("pushed to stack\n");
 }
  
 STACK_TYPE pop()
@@ -41,7 +43,7 @@ STACK_TYPE pop()
     STACK_TYPE rv;
     
     if (isEmpty()) {
-        _Error("Stack is empty", __LINE__, __FILE__);
+         _Error("Stack is empty", __LINE__, __FILE__);
     }
 
     rv = stack[stack_index];
@@ -55,13 +57,13 @@ STACK_TYPE pop()
 STACK_TYPE getValue(int i)
 {
     if (isEmpty()) {
-        _Error("Stack is empty", __LINE__, __FILE__);
+         _Error("Stack is empty", __LINE__, __FILE__);
     }
 
     if (stack[i] != empty) {
         return stack[i];
     } else {
-        _Error("Index is empty", __LINE__, __FILE__);
+       _Error("Index is empty", __LINE__, __FILE__);
     }
 
     return -1;
